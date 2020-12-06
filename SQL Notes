@@ -1,20 +1,39 @@
+# Data Definition Language (DDL)
 USE 
+CREATE DATABASE, TABLE, INDEX
+ALTER TABLE, INDEX
+DROP DATABASE, TABLE, INDEX
 
-SELECT
-  SELECT DISTINCT
-  TOP 5/BOTTOM
-  TOP 5 PERCENT
-  TOP 5 WITH TIES
+# Data Manipulation Language (DML)
+SELECT - for Reading data
+INSERT - for data Creation
+UPDATE - for data Updates
+DELETE - for Deleting data
+
+# Terms of Database table 
+Relational database
+Table
+Column
+Row
+Cell
+Primary key
+Composite primary key
+Non-primary key (unique key)
+Index
+
+SELECT - Columns                         SELECT [ALL|DISTINCT] [TOP n [PERCENT] [WITH TIES]]
+  ALL  (*)                               column_specification [[AS] result_column]
+  DISTINCT                               [, column_specification [[AS] result_column]] ...
+  TOP n/BOTTOM
+  TOP n PERCENT
+  TOP n WITH TIES - Include additional rows that match the values in the last row
   GETDATE()
   LEFT
+  AS - create alias
   
-  AS
-FROM
-WHERE 
-  IN
-  BETWEEN
-  LIKE
-ORDER BY
+FROM - table source
+WHERE - filter/restrict rows
+ORDER BY - order of results in rows
   ASC/DESC
   FETCH FIRST|NEXT ONLY
   OFFSET FIRST 5 ROWS
@@ -22,28 +41,51 @@ ORDER BY
 GETDATE()
 LEFT
 
+## Calculated values (arithmetic expression, string expression, functions)
+Result of calculation                 (Column 1 - Column 2 - Column 3) AS New_Name
+Result of concatenation               (Column 1 + '    ' + Column 2) AS New_Name
+Result of a function                  (Function ) AS New_Name
+
+# Arithmetic Operators 
+* Multiplication
+/ Division
+% Modulo (Remainder)
++ Addition
+                                       Use parenthesis to control sequence
+                                       Order: Arithmetic expressions, multiplication, division, modulo, addition, substraction
+
 # Comparison Operators
-=
->
-<
-<=
->=
-<>
+                                       Used in WHERE clause
+                                       WHERE expression_1 operator expression_2
+=  - Equal to
+>  - Greater than
+<  - Less than
+<= - Less than or equal to
+>= - Greater than or equal to
+<> - Not equal
 
 # Logical operators
+                                       Used in WHERE clause
+                                       WHERE [NOT] search_condition_1 {AND|OR}
+                                       [NOT] search_condition_2 ...
+                                                        Order of precedence: NOT, AND, OR
 NOT
 AND
 OR
+                                       WHERE test_expression [NOT] IN
+                                       ({subquery|expression_1 [, expression_2]...}) 
 IN 
-BETWEEN
+                                       WHERE test_expression [NOT] BETWEEN
+                                       begin_expression AND end_expression
+BETWEEN 
+                                       WHERE test_expression [NOT] LIKE...
 LIKE
+  Wildcard symbols
+  %     - Matches an string of zero or more characters
+  _     - Matches any single character
+  []    - Matches a single character listed within the brackets
+  [ - ] - Matches a single character within the given range
+  [ ^ ] - Matches a single character not listed after the caret
 
-# Wildcard symbols
-%
-_
-[]
-[ - ]
-[ ^ ]
-
-# Null
+                                       WHERE test_expression [NOT] BETWEEN
 IS [NOT] NULL
