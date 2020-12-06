@@ -21,6 +21,15 @@ Composite primary key
 Non-primary key (unique key)
 Index
 
+# General Structure
+SELECT select_list
+FROM table_source
+[WHERE search_condition]
+[GROUP BY group_by_list]
+  [HAVING search_condition]
+[ORDER BY order_by_list]
+
+
 SELECT - Columns                         SELECT [ALL|DISTINCT] [TOP n [PERCENT] [WITH TIES]]
   ALL  (*)                               column_specification [[AS] result_column]
   DISTINCT                               [, column_specification [[AS] result_column]] ...
@@ -28,7 +37,7 @@ SELECT - Columns                         SELECT [ALL|DISTINCT] [TOP n [PERCENT] 
   TOP n PERCENT
   TOP n WITH TIES - Include additional rows that match the values in the last row
   GETDATE()
-  LEFT
+  LEFT - Left most character
   AS - create alias
   
 FROM - table source
@@ -92,6 +101,14 @@ ORDER BY - order of results in rows    ORDER BY expression [ASC|DESC] [, express
                                        [FETCH {FIRST|NEXT} fetch_row_count {ROW|ROWS} ONLY]
   FETCH FIRST|NEXT ONLY
   OFFSET (FIRST) 5 ROWS
+  
+# Aggregate Functions
+    SUM(_____) AS
+    AVG(_____) AS
+    MIN(____) AS
+    MAX(___) AS
+    COUNT(____)
+    COUNT(*)
 
 GETDATE()
 LEFT
