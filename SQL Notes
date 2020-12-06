@@ -33,13 +33,6 @@ SELECT - Columns                         SELECT [ALL|DISTINCT] [TOP n [PERCENT] 
   
 FROM - table source
 WHERE - filter/restrict rows
-ORDER BY - order of results in rows
-  ASC/DESC
-  FETCH FIRST|NEXT ONLY
-  OFFSET FIRST 5 ROWS
-
-GETDATE()
-LEFT
 
 ## Calculated values (arithmetic expression, string expression, functions)
 Result of calculation                 (Column 1 - Column 2 - Column 3) AS New_Name
@@ -89,3 +82,16 @@ LIKE
 
                                        WHERE test_expression [NOT] BETWEEN
 IS [NOT] NULL
+
+ORDER BY - order of results in rows    ORDER BY expression [ASC|DESC] [, expression [ASC|DESC]]...
+                                       Default sequence: Nulls, Special characters, Numbers, Letters
+  ASC/DESC
+  
+                                       ORDER BY order_by_list
+                                       OFFSET offset_row_count {ROW|ROWS}
+                                       [FETCH {FIRST|NEXT} fetch_row_count {ROW|ROWS} ONLY]
+  FETCH FIRST|NEXT ONLY
+  OFFSET (FIRST) 5 ROWS
+
+GETDATE()
+LEFT
