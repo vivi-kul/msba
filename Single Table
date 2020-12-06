@@ -37,6 +37,7 @@ SELECT PaymentDate, BalanceDue
 FROM Invoices
 WHERE NOT (PaymentDate IS NULL AND BalanceDue IS NOT NULL ) OR (PaymentDate IS NOT NULL AND BalanceDue IS NULL)
 
+_____________________________________________________________________________________________________________________________________________________________________
 
 --1. The * is used to retrieve all columns
 SELECT *
@@ -44,49 +45,37 @@ FROM Invoices;
 
 
 -- Two ways to name the columns in a result set
--- Using the AS keyword (the preferred technique)
--- Fig 3-04a
+-- Using the AS keyword (the preferred technique) -- Fig 3-04a
 SELECT InvoiceNumber AS [Invoice Number], InvoiceDate AS Date,
     InvoiceTotal AS Total
 FROM Invoices;
 
 --Using the equal operator (an older technique) 
-SELECT [Invoice Number] = InvoiceNumber, Date = InvoiceDate,
-    Total = InvoiceTotal
+SELECT [Invoice Number] = InvoiceNumber, Date = InvoiceDate, Total = InvoiceTotal
 FROM Invoices;
 
 
---A SELECT statement that doesn’t name a calculated column
--- Fig 3-04b
-SELECT InvoiceNumber, InvoiceDate, InvoiceTotal,
-    InvoiceTotal - PaymentTotal - CreditTotal 
+--A SELECT statement that doesn’t name a calculated column -- Fig 3-04b
+SELECT InvoiceNumber, InvoiceDate, InvoiceTotal, InvoiceTotal - PaymentTotal - CreditTotal 
 FROM Invoices;
 
--- How to concatenate string data
--- Fig 3-05a
+-- How to concatenate string data -- Fig 3-05a
 SELECT VendorCity, VendorState, VendorCity + VendorState
 FROM Vendors;
 
--- How to format string data using literal values
--- Fig 3-05b
-SELECT VendorName,
-    VendorCity + ', ' + VendorState + ' ' + VendorZipCode AS Address
+-- How to format string data using literal values -- Fig 3-05b
+SELECT VendorName, VendorCity + ', ' + VendorState + ' ' + VendorZipCode AS Address
 FROM Vendors;
 
--- How to include apostrophes in literal values
--- Fig 3-05c
-SELECT VendorName + '''s Address: ',
-    VendorCity + ', ' + VendorState + ' ' + VendorZipCode
+-- How to include apostrophes in literal values -- Fig 3-05c
+SELECT VendorName + '''s Address: ', VendorCity + ', ' + VendorState + ' ' + VendorZipCode
 FROM Vendors;
 
---A SELECT statement that calculates the balance due
--- Fig 3-06a
-SELECT InvoiceTotal, PaymentTotal, CreditTotal,
-    InvoiceTotal - PaymentTotal - CreditTotal AS BalanceDue
+--A SELECT statement that calculates the balance due-- Fig 3-06a
+SELECT InvoiceTotal, PaymentTotal, CreditTotal, InvoiceTotal - PaymentTotal - CreditTotal AS BalanceDue
 FROM Invoices;
 
--- A SELECT statement that uses parentheses to control the sequence of operations
--- Fig 3-06b
+-- A SELECT statement that uses parentheses to control the sequence of operations -- Fig 3-06b
 SELECT InvoiceID,
     InvoiceID + 7 * 3 AS OrderOfPrecedence,
     (InvoiceID + 7) * 3 AS AddFirst
@@ -101,38 +90,31 @@ SELECT VendorContactFName, VendorContactLName,
     LEFT(VendorContactLName, 1) AS Initials
 FROM Vendors;
 
-
--- A SELECT statement that returns all rows
--- Fig 3-08a
+-- A SELECT statement that returns all rows-- Fig 3-08a
 SELECT VendorCity, VendorState
 FROM Vendors
 ORDER BY VendorCity;
 
--- A SELECT statement that eliminates duplicate rows
--- Fig 3-08b
+-- A SELECT statement that eliminates duplicate rows -- Fig 3-08b
 SELECT DISTINCT VendorCity, VendorState
 FROM Vendors;
 
--- Fig 3-09a
 -- A SELECT statement with a TOP clause
 SELECT TOP 5 VendorID, InvoiceTotal
 FROM Invoices
 ORDER BY InvoiceTotal DESC;
 
---A SELECT statement with a TOP clause and the PERCENT keyword
--- Fig 3-09b
+--A SELECT statement with a TOP clause and the PERCENT keyword -- Fig 3-09b
 SELECT TOP 5 PERCENT VendorID, InvoiceTotal
 FROM Invoices
 ORDER BY InvoiceTotal DESC;
 
--- A SELECT statement with a TOP clause and the WITH TIES keyword
--- Fig 3-09c
+-- A SELECT statement with a TOP clause and the WITH TIES keyword -- Fig 3-09c
 SELECT TOP 5 WITH TIES VendorID, InvoiceDate
 FROM Invoices
 ORDER BY InvoiceDate ASC;
 
--- A compound condition without parentheses
--- Fig 3-11a
+-- A compound condition without parentheses -- Fig 3-11a
 SELECT InvoiceNumber, InvoiceDate, InvoiceTotal,
        InvoiceTotal - PaymentTotal - CreditTotal AS BalanceDue
 FROM Invoices
@@ -140,8 +122,7 @@ WHERE InvoiceDate > '01/01/2016'
     OR InvoiceTotal > 500
     AND InvoiceTotal - PaymentTotal - CreditTotal > 0;
 
--- The same compound condition with parentheses
--- Fig 3-11b
+-- The same compound condition with parentheses -- Fig 3-11b
 SELECT InvoiceNumber, InvoiceDate, InvoiceTotal,
        InvoiceTotal - PaymentTotal - CreditTotal AS BalanceDue
 FROM Invoices
@@ -149,58 +130,50 @@ WHERE (InvoiceDate > '01/01/2016'
     OR InvoiceTotal > 500)
     AND InvoiceTotal - PaymentTotal - CreditTotal > 0;
 
--- An ORDER BY clause that sorts by one column
--- Fig 3-16a
+-- An ORDER BY clause that sorts by one column -- Fig 3-16a
 SELECT VendorName,
     VendorCity + ', ' + VendorState + ' ' + VendorZipCode AS Address
 FROM Vendors
 ORDER BY VendorName;
 
---An ORDER BY clause that sorts by one column in descending sequence
--- Fig 3-16b
+--An ORDER BY clause that sorts by one column in descending sequence -- Fig 3-16b
 SELECT VendorName,
     VendorCity + ', ' + VendorState + ' ' + VendorZipCode AS Address
 FROM Vendors
 ORDER BY VendorName DESC;
 
--- An ORDER BY clause that sorts by three columns
--- Fig 3-16c
+-- An ORDER BY clause that sorts by three columns -- Fig 3-16c
 SELECT VendorName,
     VendorCity + ', ' + VendorState + ' ' + VendorZipCode AS Address
 FROM Vendors
 ORDER BY VendorState, VendorCity, VendorName;
 
--- An ORDER BY clause that uses an alias
--- Fig 3-17a
+-- An ORDER BY clause that uses an alias -- Fig 3-17a
 SELECT VendorName,
     VendorCity + ', ' + VendorState + ' ' + VendorZipCode AS Address
 FROM Vendors
 ORDER BY Address, VendorName;
 
--- An ORDER BY clause that uses an expression
--- Fig 3-17b
+-- An ORDER BY clause that uses an expression -- Fig 3-17b
 SELECT VendorName,
     VendorCity + ', ' + VendorState + ' ' + VendorZipCode AS Address
 FROM Vendors
 ORDER BY VendorContactLName + VendorContactFName;
 
--- An ORDER BY clause that uses column positions
--- Fig 3-17c
+-- An ORDER BY clause that uses column positions -- Fig 3-17c
 SELECT VendorName,
     VendorCity + ', ' + VendorState + ' ' + VendorZipCode AS Address
 FROM Vendors
 ORDER BY 2, 1;
 
---An ORDER BY clause that retrieves the first five rows
--- Fig 3-18a
+--An ORDER BY clause that retrieves the first five rows -- Fig 3-18a
 SELECT VendorID, InvoiceTotal
 FROM Invoices
 ORDER BY InvoiceTotal DESC
     OFFSET 0 ROWS
     FETCH FIRST 5 ROWS ONLY;
 
--- An ORDER BY clause that retrieves rows 11 through 20
--- Fig 3-18-b
+-- An ORDER BY clause that retrieves rows 11 through 20 -- Fig 3-18-b
 SELECT VendorName, VendorCity, VendorState, VendorZipCode
 FROM Vendors
 WHERE VendorState = 'CA'
