@@ -1,0 +1,303 @@
+-- ==> Figure 6-01.sql <==
+USE ITOM_AP;
+
+SELECT InvoiceNumber, InvoiceDate, InvoiceTotal
+FROM Invoices
+WHERE InvoiceTotal > 
+    (SELECT AVG(InvoiceTotal)
+     FROM Invoices)
+ORDER BY InvoiceTotal;
+
+
+-- ==> Figure 6-01_s.sql <==
+
+
+-- The subquery
+SELECT AVG(InvoiceTotal)
+FROM Invoices;
+
+-- ==> Figure 6-02a.sql <==
+
+
+SELECT InvoiceNumber, InvoiceDate, InvoiceTotal
+FROM Invoices JOIN Vendors
+    ON Invoices.VendorID = Vendors.VendorID
+WHERE VendorState = 'CA'
+ORDER BY InvoiceDate;
+
+
+-- ==> Figure 6-02b.sql <==
+
+
+SELECT InvoiceNumber, InvoiceDate, InvoiceTotal
+FROM Invoices
+WHERE VendorID IN
+    (SELECT VendorID
+    FROM Vendors
+    WHERE VendorState = 'CA')
+ORDER BY InvoiceDate;
+
+-- ==> Figure 6-02b_s.sql <==
+
+
+-- The subquery
+SELECT VendorID
+FROM Vendors
+WHERE VendorState = 'CA';
+
+-- ==> Figure 6-03a.sql <==
+
+
+SELECT VendorID, VendorName, VendorState
+FROM Vendors
+WHERE VendorID NOT IN
+    (SELECT DISTINCT VendorID
+    FROM Invoices);
+
+-- ==> Figure 6-03a_s.sql <==
+
+
+-- The subquery
+SELECT DISTINCT VendorID
+FROM Invoices;
+
+-- ==> Figure 6-03b.sql <==
+
+
+SELECT Vendors.VendorID, VendorName, VendorState
+FROM Vendors LEFT JOIN Invoices
+    ON Vendors.VendorID = Invoices.VendorID
+WHERE Invoices.VendorID IS NULL;
+
+-- ==> Figure 6-04.sql <==
+
+
+SELECT InvoiceNumber, InvoiceDate, InvoiceTotal,
+    InvoiceTotal - PaymentTotal - CreditTotal AS BalanceDue
+FROM Invoices
+WHERE InvoiceTotal - PaymentTotal - CreditTotal  > 0 
+    AND InvoiceTotal - PaymentTotal - CreditTotal <
+    (SELECT AVG(InvoiceTotal - PaymentTotal - CreditTotal)
+    FROM Invoices
+    WHERE InvoiceTotal - PaymentTotal - CreditTotal > 0)
+ORDER BY InvoiceTotal DESC;
+
+
+-- ==> Figure 6-04_s.sql <==
+
+
+-- The subquery
+SELECT AVG(InvoiceTotal - PaymentTotal - CreditTotal)
+FROM Invoices
+WHERE InvoiceTotal - PaymentTotal - CreditTotal > 0;
+
+-- ==> Figure 6-05.sql <==
+
+
+SELECT VendorName, InvoiceNumber, InvoiceTotal
+FROM Invoices JOIN Vendors ON Invoices.VendorID = Vendors.VendorID
+WHERE InvoiceTotal > ALL
+    (SELECT InvoiceTotal
+    FROM Invoices
+    WHERE VendorID = 34)
+ORDER BY VendorName;
+
+
+-- ==> Figure 6-05_s.sql <==
+
+
+-- The subquery
+SELECT InvoiceTotal
+FROM Invoices
+WHERE VendorID = 34;
+
+-- ==> Figure 6-06.sql <==
+
+
+SELECT VendorName, InvoiceNumber, InvoiceTotal
+FROM Vendors JOIN Invoices ON Vendors.VendorID = Invoices.VendorID
+WHERE InvoiceTotal < ANY
+    (SELECT InvoiceTotal
+    FROM Invoices
+    WHERE VendorID = 115);
+
+
+
+-- ==> Figure 6-06_s.sql <==
+
+
+-- The subquery
+SELECT InvoiceTotal
+FROM Invoices
+WHERE VendorID = 115;
+
+-- ==> Figure 6-07.sql <==
+
+
+SELECT VendorID, InvoiceNumber, InvoiceTotal
+FROM Invoices AS Inv_Main
+WHERE InvoiceTotal >
+    (SELECT AVG(InvoiceTotal)
+    FROM Invoices AS Inv_Sub
+    WHERE Inv_Sub.VendorID = Inv_Main.VendorID)
+ORDER BY VendorID, InvoiceTotal;
+
+
+-- ==> Figure 6-07_s.sql <==
+
+
+-- The subquery
+SELECT AVG(InvoiceTotal)
+FROM Invoices AS Inv_Sub
+--WHERE Inv_Sub.VendorID = Inv_Main.VendorID
+WHERE Inv_Sub.VendorID = 95;
+
+-- ==> Figure 6-08.sql <==
+
+
+SELECT VendorID, VendorName, VendorState
+FROM Vendors
+WHERE NOT EXISTS
+    (SELECT *
+    FROM Invoices
+    WHERE Invoices.VendorID = Vendors.VendorID);
+
+
+-- ==> Figure 6-09.sql <==
+
+
+SELECT Invoices.VendorID, MAX(InvoiceDate) AS LatestInv,
+    AVG(InvoiceTotal) AS AvgInvoice
+FROM Invoices JOIN
+    (SELECT TOP 5 VendorID, AVG(InvoiceTotal) AS AvgInvoice
+    FROM Invoices
+    GROUP BY VendorID
+    ORDER BY AvgInvoice DESC) AS TopVendor
+    ON Invoices.VendorID = TopVendor.VendorID
+GROUP BY Invoices.VendorID
+ORDER BY LatestInv DESC;
+
+
+-- ==> Figure 6-09_s.sql <==
+
+
+-- The subquery
+SELECT TOP 5 VendorID, AVG(InvoiceTotal) AS AvgInvoice
+FROM Invoices
+GROUP BY VendorID
+ORDER BY AvgInvoice DESC;
+
+-- ==> Figure 6-10a.sql <==
+
+
+SELECT DISTINCT VendorName,
+    (SELECT MAX(InvoiceDate) FROM Invoices
+    WHERE Invoices.VendorID = Vendors.VendorID) AS LatestInv
+FROM Vendors
+ORDER BY LatestInv DESC;
+
+
+-- ==> Figure 6-10b.sql <==
+
+
+SELECT VendorName, MAX(InvoiceDate) AS LatestInv
+FROM Vendors LEFT JOIN Invoices ON Vendors.VendorID = Invoices.VendorID
+GROUP BY VendorName
+ORDER BY LatestInv DESC;
+
+-- ==> Figure 6-11.sql <==
+
+
+SELECT Summary1.VendorState, Summary1.VendorName, TopInState.SumOfInvoices
+FROM
+        (SELECT V_Sub.VendorState, V_Sub.VendorName,
+            SUM(I_Sub.InvoiceTotal) AS SumOfInvoices
+        FROM Invoices AS I_Sub JOIN Vendors AS V_Sub
+            ON I_Sub.VendorID = V_Sub.VendorID
+        GROUP BY V_Sub.VendorState, V_Sub.VendorName) AS Summary1
+    JOIN
+        (SELECT Summary2.VendorState,
+            MAX(Summary2.SumOfInvoices) AS SumOfInvoices
+        FROM
+            (SELECT V_Sub.VendorState, V_Sub.VendorName,
+                SUM(I_Sub.InvoiceTotal) AS SumOfInvoices
+            FROM Invoices AS I_Sub JOIN Vendors AS V_Sub
+                ON I_Sub.VendorID = V_Sub.VendorID
+            GROUP BY V_Sub.VendorState, V_Sub.VendorName) AS Summary2
+        GROUP BY Summary2.VendorState) AS TopInState
+    ON Summary1.VendorState = TopInState.VendorState AND
+       Summary1.SumOfInvoices = TopInState.SumOfInvoices
+ORDER BY Summary1.VendorState;
+
+
+-- ==> Figure 6-12_s1.sql <==
+
+
+-- The subquery
+SELECT V_Sub.VendorState, V_Sub.VendorName, SUM(I_Sub.InvoiceTotal) AS SumOfInvoices
+FROM Invoices AS I_Sub JOIN Vendors AS V_Sub
+  ON I_Sub.VendorID = V_Sub.VendorID
+GROUP BY V_Sub.VendorState, V_Sub.VendorName;
+-- ==> Figure 6-12_s2.sql <==
+
+
+-- The subquery
+SELECT Summary2.VendorState, MAX(Summary2.SumOfInvoices) AS SumOfInvoices
+FROM
+    (SELECT V_Sub.VendorState, V_Sub.VendorName, SUM(I_Sub.InvoiceTotal) AS SumOfInvoices
+     FROM Invoices AS I_Sub JOIN Vendors AS V_Sub
+       ON I_Sub.VendorID = V_Sub.VendorID
+     GROUP BY V_Sub.VendorState, V_Sub.VendorName) AS Summary2
+GROUP BY Summary2.VendorState;
+-- ==> Figure 6-13.sql <==
+
+
+WITH Summary AS
+(
+    SELECT VendorState, VendorName, SUM(InvoiceTotal) AS SumOfInvoices
+    FROM Invoices 
+        JOIN Vendors ON Invoices.VendorID = Vendors.VendorID
+    GROUP BY VendorState, VendorName
+),
+
+TopInState AS
+(
+	SELECT VendorState, MAX(SumOfInvoices) AS SumOfInvoices
+    FROM Summary
+    GROUP BY VendorState
+)
+
+SELECT Summary.VendorState, Summary.VendorName, TopInState.SumOfInvoices
+FROM Summary JOIN TopInState
+    ON Summary.VendorState = TopInState.VendorState AND
+       Summary.SumOfInvoices = TopInState.SumOfInvoices
+ORDER BY Summary.VendorState;
+-- ==> Figure 6-14a.sql <==
+USE Examples;
+
+SELECT EmployeeID, LastName, FirstName, ManagerID
+FROM Employees;
+
+-- ==> Figure 6-14b.sql <==
+USE Examples;
+
+WITH EmployeesCTE AS
+(
+		-- Anchor member
+		SELECT EmployeeID, 
+			FirstName + ' ' + LastName As EmployeeName, 
+			1 As Rank
+		FROM Employees
+		WHERE ManagerID IS NULL
+	UNION ALL
+		-- Recursive member
+		SELECT Employees.EmployeeID, 
+			FirstName + ' ' + LastName, 
+			Rank + 1
+		FROM Employees
+			JOIN EmployeesCTE
+			ON Employees.ManagerID = EmployeesCTE.EmployeeID
+)
+SELECT *
+FROM EmployeesCTE
+ORDER BY Rank, EmployeeID;
