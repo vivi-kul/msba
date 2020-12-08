@@ -179,6 +179,7 @@ tzoffset	tz
 
 # String Functions
 LEN(string)                                 LEN('SQL Server')	= 10 ... LEN('  SQL Server  ')	= 12 
+ ** Can also use LENGTH or char_length
 LTRIM(string)                               LTRIM('  SQL Server  ')	= 'SQL Server  '
 RTRIM(string)                               RTRIM('  SQL Server  ')	= '  SQL Server'
                                             LTRIM(RTRIM('  SQL Server  ')) = 'SQL Server'
