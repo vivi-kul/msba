@@ -77,12 +77,20 @@ Result of a function                  (Function ) AS New_Name
 # Comparison Operators
                                        Used in WHERE clause
                                        WHERE expression_1 operator expression_2
+                                       WHERE expression comparison_operator [SOME|ANY|ALL]
+                                               (subquery)
+                                               WHERE InvoiceTotal > ALL(SELECT InvoiceTotal FROM Invoices WHERE VendorID = 34)
 =  - Equal to
 >  - Greater than
 <  - Less than
 <= - Less than or equal to
 >= - Greater than or equal to
 <> - Not equal
+
+x > ALL (1, 2)	SAME AS x > 2
+x < ALL (1, 2)	SAME AS x < 1
+x = ALL (1, 2)	SAME AS (x = 1) AND (x = 2)
+x <> ALL (1, 2)	SAME AS (x <> 1) AND (x <> 2)
 
 # Logical operators
                                        Used in WHERE clause
@@ -189,8 +197,13 @@ SPACE(integer)
 
 CAST
     Used to cast string to integer, removes time values
+                                           CAST(expression AS data_type)
                                            CAST('2016-09-30 11:35:00' AS smalldatetime) + 1 = 2016-10-01 11:35:00
                                            CAST(CAST('2016-09-30' AS datetime) - CAST('2015-12-01' AS datetime) AS int) = 304
+                                                            SELECT InvoiceDate, InvoiceTotal,
+                                                            CAST(InvoiceDate AS varchar) AS varcharDate,
+                                                            CAST(InvoiceTotal AS int) AS integerTotal,
+                                                            CAST(InvoiceTotal AS varchar) AS varcharTotal
 CONVERT
     Removes time values                    CONVERT(datetime, CONVERT(char(10), StartDate, 110)) = '2011-10-28';
 
@@ -304,3 +317,38 @@ EXCEPT | INTERSECT
                                    SELECT_statement_1 {EXCEPT|INTERSECT} SELECT_statement_2
                                     [ORDER BY order_by_list]
 Intersect: occur in both queries
+
+
+# UPDATE
+UPDATE table_name
+SET column_name_1 = expression_1 [, column_name_2 =
+    expression_2]...
+[FROM table_source [[AS] table_alias]
+[WHERE search_condition]
+
+UPDATE InvoiceCopy
+SET TermsID = 1
+WHERE VendorID = 95;
+
+# DELETE
+DELETE VendorCopy
+WHERE VendorID NOT IN 
+   (SELECT DISTINCT VendorID FROM InvoiceCopy);
+   
+   
+# SUBQUERIES
+[NOT] EXISTS                                    WHERE [NOT] EXISTS (subquery)
+
+# COMMON TABLE EXPRESSION (CTE)
+      Creates a temporary table
+      Multiple CTEs: Separate them with commas
+      Each CTE can refer to itself and any previously defined CTEs
+      Then in the main select statement join the tables in from statement...
+                                                WITH cte_name1 AS (query_definition1)
+                                                [, cte_name2 AS (query_definition2)]
+                                                [...]
+                                                sql_statement
+
+
+
+
