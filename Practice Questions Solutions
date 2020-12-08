@@ -1,0 +1,51 @@
+#Second hi ghest Salary problem
+  SELECT TOP 1 Name, dept_name, Salary 
+  from Instructor 
+  where salary < (SELECT MAX(Salary) from Instructor) ORDER BY SALARY DESC
+
+# Instructor salary range query
+  SELECT CONCAT(I.FirstName,'-',I.LastName), D.dept_name, I.Salary 
+  from Instructor I INNER JOIN department D on I.dept_id = D.dept_id 
+  where I.salary IN (SELECT Salary from Instructor where Salary > 5000 AND Salary < 8000) 
+  ORDER BY SALARY ASC
+ 
+(Concat for strings)
+
+# Calculate total employment days at the department
+  select CONCAT(FirstName, '-', LastName) AS 'Full-Name', DATEDIFF(day, JoinDate, EndDate) AS 'Total-Days'
+  from instructor 
+  order by DATEDIFF(day, JoinDate, EndDate) ASC
+  
+
+# Salary Percent Rank of Instructors
+
+WITH Instructors AS
+(SELECT Name, Salary, PERCENT_RANK() OVER (ORDER BY Salary ASC) as sal_rank 
+FROM instructor Group by Instructor.Name,  salary)
+
+SELECT
+     Name, Salary, sal_rank
+     FROM instructors
+ WHERE sal_rank >= 0.60
+ Group By Instructors.Name, Salary, Instructors.sal_rank
+ ORDER BY sal_rank;
+
+
+# Display fullname query
+  select CONCAT (LTRIM(RTRIM(FirstName)),
+  ' ', 
+  case MiddleInitial when 'F' then 'Frank' when 'H' then 'Henry' when 'J' then 'Joseph' else '-' end,
+  ' ', 
+  LTRIM(RTRIM(LastName))) AS Fullnames from Instructors
+
+# Calculate Income
+  SELECT NAME, (salary + ISNULL(Bonus, 0)) AS Income 
+  from instructor
+
+# The Perfect Arrangement 
+   SELECT ID,  FIRST_NAME, LAST_NAME 
+   FROM customer
+   WHERE len(CONCAT(CUSTOMER.FIRST_NAME, CUSTOMER.LAST_NAME)) < 12
+   ORDER BY len(CONCAT(CUSTOMER.FIRST_NAME, CUSTOMER.LAST_NAME)), CONCAT(FIRST_NAME, LAST_NAME), ID  ASC
+
+
