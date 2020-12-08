@@ -1,0 +1,31 @@
+# Count the Employees
+select id from company where employees > 10000 order by id asc;
+
+# Customers Credit Limit 
+select id, name from customer where country = 'USA' AND credits > 100000 order by id asc
+
+# Youngest Employees
+select UIN, NAME from employee left join employee_uin on employee.id = employee_uin.id where employee.age < 25 order by name asc
+
+# Combine Two Tables 
+select FirstName, LastName, City, Country from person join address on person.personID = address.personID
+
+# Customers Who Never Order 
+select name from customers where customers.id not in ( select customerid from orders )
+# Employees and UIN 
+select employee.name, employee_uin.uin from employee left join employee_uin on employee.id = employee_uin.id
+
+# Relative Pay 
+select e1.name, e2.name from employee as e1 join employee as e2 where e1.salary < e2.salary order by e1.id, e2.salary asc
+
+# The Superheroes Location
+select id from superhero where latitude < 50 AND longitude <50
+
+# Employees Earning More Than Their Managers
+select a.name as employee from employee as a join employee as b on a.managerid = b.id AND a.salary >b.salary
+
+# Highest Grade For Each Student
+select student_id, min(course_id) as course_id, grade from Enrollments where (student_id, grade) in (select student_id, max(grade) from Enrollments group by student_id) group by student_id, grade order by student_id asc;
+
+# Rank Scores
+select format(Scores.Score, 'g15') as Score, COUNT(*) as Rank from Scores join (select distinct Score from Scores) Ranking on Scores.Score <= Ranking.Score group by Scores.Id, Scores.Score order by Scores.Score desc;
