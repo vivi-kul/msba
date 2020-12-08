@@ -39,7 +39,25 @@ SELECT - Columns                         SELECT [ALL|DISTINCT] [TOP n [PERCENT] 
   GETDATE()
   LEFT - Left most character
   AS - create alias
-  
+  CASE WHEN
+                                        CASE input_expression
+                                           WHEN when_expression_1 THEN result_expression_1
+                                          [WHEN when_expression_2 THEN result_expression_2]...
+                                          [ELSE else_result_expression]
+                                        END AS..
+  IIF                                   IIF(conditional_expression, true_value, false_value)
+                                        SELECT IIF(SUM(InvoiceTotal) < 1000, 'Low', 'High') AS InvoiceRange
+  CHOOSE                                CHOOSE(TermsID, '10 days', '20 days', '30 days', '60 days', '90 days') AS NetDue
+  IS [NOT] NULL                         ISNULL(check_expression, replacement_value)
+                                        IS NULL (Bonus, 0) ... is like Excel's IF
+  COALESCE                              SELECT PaymentDate, COALESCE(PaymentDate, '1900-01-01') AS NewDate
+                                        COALESCE(CAST(InvoiceTotal AS varchar), 'No invoices')
+       Is null and coalesce let you substitute non null values for null values
+       coalesce returns the first expression in a list of expressions that isnt null, all expressions need the same data type
+            if all expression are null, it returns null bbalue
+       isnull returns the expression if it isnt null, otherwise it returns the value you specify, expression and value need same data type
+       
+       
 FROM - table source
 WHERE - filter/restrict rows
 
@@ -90,8 +108,7 @@ LIKE
   [ ^ ] - Matches a single character not listed after the caret
 
                                        WHERE test_expression [NOT] BETWEEN
-IS [NOT] NULL
-
+  
 ORDER BY - order of results in rows    ORDER BY expression [ASC|DESC] [, expression [ASC|DESC]]...
                                        Default sequence: Nulls, Special characters, Numbers, Letters
   ASC/DESC
@@ -102,6 +119,7 @@ ORDER BY - order of results in rows    ORDER BY expression [ASC|DESC] [, express
   FETCH FIRST|NEXT ONLY
   OFFSET (FIRST) 5 ROWS
   
+FUNCTIONS
 # Aggregate Functions
     SUM(_____) AS
     AVG(_____) AS
@@ -110,5 +128,179 @@ ORDER BY - order of results in rows    ORDER BY expression [ASC|DESC] [, express
     COUNT(____)
     COUNT(*)
 
+# Scalar Functions
 GETDATE()
-LEFT
+GETUTCDATE()
+ 
+SYSDATETIME()
+SYSUTCDATETIME()
+SYSDATETIMEOFFSET()
+ 
+DAY(date)
+MONTH(date) - # of months
+YEAR(date)
+
+DATENAME(datepart,date)
+DATEPART(datepart,date) 
+DATEADD(datepart,number,date)
+DATEDIFF(datepart,startdate,enddate)
+ 
+TODATETIMEOFFSET(datetime2,tzoffset)
+SWITCHOFFSET(datetimeoffset,tzoffset)
+ 
+EOMONTH(startdate[,months])                     EOMONTH('2016-02-01')	2016-02-29
+                                                EOMONTH('2016-02-01',2)	2016-04-30
+DATEFROMPARTS(year,month,day)
+ISDATE(expression)
+
+year	yy, yyyy
+quarter	qq, q
+month	mm, m
+dayofyear	dy, y
+day	dd, d
+week	wk, ww
+weekday	dw
+hour	hh
+minute	mi, n
+second	ss, s
+millisecond	ms
+microsecond	mcs
+nanosecond	ns
+tzoffset	tz
+
+
+# String Functions
+LEN(string)                                 LEN('SQL Server')	= 10 ... LEN('  SQL Server  ')	= 12 
+LTRIM(string)                               LTRIM('  SQL Server  ')	= 'SQL Server  '
+RTRIM(string)                               RTRIM('  SQL Server  ')	= '  SQL Server'
+                                            LTRIM(RTRIM('  SQL Server  ')) = 'SQL Server'
+LEFT(string,length)                         LEFT('SQL Server', 3)	= 'SQL'
+RIGHT(string,length)                        
+SUBSTRING(string,start,length)              SUBSTRING('(559) 555-1212', 7, 8) =	555-1212
+REPLACE(search,find,replace)                REPLACE(RIGHT('(559) 555-1212', 13), ') ', '-') = 559-555-1212
+REVERSE(string)                             
+CHARINDEX(find,search[,start])              CHARINDEX('SQL', '  SQL Server')	= 3
+                                            CHARINDEX('-', '(559) 555-1212')	= 10
+PATINDEX(find,search)                       PATINDEX('%v_r%', 'SQL Server')	= 8
+CONCAT(value1,value2[,value3]...            CONCAT('Run time: ',1.52,' seconds') = Run time: 1.52 seconds
+LOWER(string)                               LOWER('SQL Server') =	'sql server'
+UPPER(string)                               UPPER('ca')	= CA
+SPACE(integer)                             
+
+CAST
+    Used to cast string to integer, removes time values
+                                           CAST('2016-09-30 11:35:00' AS smalldatetime) + 1 = 2016-10-01 11:35:00
+                                           CAST(CAST('2016-09-30' AS datetime) - CAST('2015-12-01' AS datetime) AS int) = 304
+CONVERT
+    Removes time values                    CONVERT(datetime, CONVERT(char(10), StartDate, 110)) = '2011-10-28';
+
+    
+# Numeric Functions
+ROUND(number,length[,function])
+ISNUMERIC(expression)
+ABS(number)                           ABS(-1.25)	= 1.25
+CEILING(number)                       CEILING(-1.25) = -1
+                                      CEILING(1.25)	= 2
+FLOOR(number)                         FLOOR(-1.25) = -2
+                                      FLOOR(1.25)	= 1
+SQUARE(float_number)                  SQUARE(5.2786) = 27.86361796
+SQRT(float_number)                    SQRT(125.43) = 11.199553562531
+RAND([integer])                       RAND() = 0.243729
+
+ROUND(12.5,0)	= 13.0
+ROUND(12.4999,0) = 12.0000
+ROUND(12.4999,1) = 12.5000
+ROUND(12.4999,-1) =	10.0000
+ROUND(12.5,0,1) =	12.0
+ 
+ISNUMERIC(-1.25) =	1
+ISNUMERIC('SQL Server') =	0
+ISNUMERIC('2016-09-30') =	0
+
+
+# Analytic Functions
+      Compute aggregate value based on a group of rows
+      Can return multiple rows for each group
+      Compute moving averages, running totals, percentages, or top n results within a group
+
+{FIRST_VALUE|LAST_VALUE}(scalar_expression)
+    OVER ([partition_by_clause] order_by_clause          [rows_range_clause])
+ 
+{LEAD|LAG}(scalar_expression [, offset [, default]])
+    OVER ([partition_by_clause] order_by_clause)
+ 
+{PERCENT_RANK()|CUME_DIST}    OVER ([partition_by_clause] order_by_clause)
+ 
+{PERCENTILE_CONT|PERCENTILE_DISC}(numeric_literal) 
+    WITHIN GROUP (ORDER BY expression [ASC|DESC])   OVER (partition_by_clause)
+
+CUME_DIST() OVER (PARTITION BY SalesYear ORDER BY SalesTotal) AS CumeDist
+
+
+# Ranking Functions
+ROW_NUMBER() OVER ([partition_by_clause] order_by_clause)
+RANK() OVER ([partition_by_clause] order_by_clause)
+DENSE_RANK() OVER ([partition_by_clause] order_by_clause)
+      -- returns rank of each row within a result set partition, with no gaps in the ranking values
+NTILE(integer_expression) OVER ([partition_by_clause] order_by_clause)
+                       Lets you decide to split up output into # of splits          
+                                   SELECT TermsDescription, 
+                                   NTILE(2) OVER (ORDER BY TermsID) AS Tile2, 
+                                   NTILE(3) OVER (ORDER BY TermsID) AS Tile3, 
+                                   NTILE(4) OVER (ORDER BY TermsID) AS Tile4 
+
+
+# Rowset Functions
+# Function Determinism
+# Function Collation
+
+JOINS
+    (INNER) JOIN
+    SELECT select_list
+                                  SELECT select_list
+                                  FROM table_1 [AS] n1
+                                  [INNER] JOIN table_2 [AS] n2
+                                       ON n1.column_name operator n2.column_name
+                                  [[INNER] JOIN table_3 [AS] n3
+                                       ON n2.column_name operator n3.column_name]...
+  
+                                          Examples:
+                                          SELECT InvoiceNumber, VendorName
+                                          FROM Vendors JOIN Invoices
+                                          ON Vendors.VendorID = Invoices.VendorID;
+
+** Inner join with JOIN Condition and SEARCH condition (could also be in where clause)
+                                  FROM Invoices JOIN InvoiceLineItems AS LineItems
+                                  ON (Invoices.InvoiceID = LineItems.InvoiceID) AND
+                                  (Invoices.InvoiceTotal > LineItems.InvoiceLineItemAmount)
+    SELF-JOIN
+     ON table1.name = table       FROM Vendors AS Vendors1 JOIN Vendors AS Vendors2
+ 
+    OUTER JOINS
+        LEFT OUTER
+        RIGHT OUTER
+        FULL OUTER
+    
+                                   SELECT select_list
+                                   FROM table_1
+                                   {LEFT|RIGHT|FULL} [OUTER] JOIN table_2
+                                         ON join_condition_1
+    CROSS JOIN
+                                   FROM Departments CROSS JOIN Employees
+         Produces result set that includes each row from the first table joined with each row from the second table
+         Cartesian product table
+         
+UNION Operation
+        Each result set returns same # of columns
+        Needs compatible data types
+        Union eliminates duplicate rows
+        (Use ALL to keep duplicates)
+                                   SELECT_statement_1
+                                    UNION [ALL]
+                                   SELECT_statement_2
+                                    [UNION [ALL]
+
+EXCEPT | INTERSECT
+                                   SELECT_statement_1 {EXCEPT|INTERSECT} SELECT_statement_2
+                                    [ORDER BY order_by_list]
+Intersect: occur in both queries
