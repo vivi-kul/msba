@@ -1,0 +1,143 @@
+______________________________________________________________________________________________________________________________________________________
+Arithmetic with R
+
+Addition: +
+Subtraction: -
+Multiplication: *
+Division: /
+Exponentiation: ^
+  The ^ operator raises the number to its left to the power of the number to its right: for example 3^2 is 9.
+Modulo: %%
+  The modulo returns the remainder of the division of the number to the left by the number on its right, for example 5 modulo 3 or 5 %% 3 is 2.
+  
+______________________________________________________________________________________________________________________________________________________
+Variables
+  
+  A variable allows you to store a value (e.g. 4) or an object (e.g. a function description) in R. 
+  You can then later use this variable's name to easily access the value or the object that is stored within this variable.
+
+# Assign the value 42 to x
+    x <- 42
+# Print out the value of the variable x
+    x
+
+# Assign a value to the variables my_apples and my_oranges
+    my_apples <- 5
+    my_oranges <- 6
+# Add these two variables together
+    my_apples + my_oranges
+# Create the variable my_fruit
+    my_fruit <- my_apples + my_oranges
+
+______________________________________________________________________________________________________________________________________________________
+
+Basic data types in R
+
+R works with numerous data types. Some of the most basic types to get started are:
+
+NUMERICS: Decimal values like 4.5 are called numerics.
+INTEGERS: Whole numbers like 4 are called integers. Integers are also numerics.
+LOGICAL: Boolean values (TRUE or FALSE) are called logical.
+CHARACTERS: Text (or string) values are called characters.
+STRINGS: Note how the quotation marks in the editor indicate that "some text" is a string
+
+Functions:
+class() to find out data type
+
+______________________________________________________________________________________________________________________________________________________
+
+VECTORS
+  Vectors are one-dimension arrays that can hold numeric data, character data, or logical data. In other words, a vector is a simple tool to store data.
+  In R, you create a vector with the combine function c(). You place the vector elements separated by a comma between the parentheses. For example:
+    numeric_vector <- c(1, 2, 3)
+    character_vector <- c("a", "b", "c")
+  Once you have created these vectors in R, you can use them to do calculations.
+
+# Poker winnings from Monday to Friday
+    poker_vector <- c(140, -50, 20, -120, 240)
+# Roulette winnings from Monday to Friday
+    roulette_vector <-  c(-24,-50,100,-350,10)
+    
+  Naming a vector
+  As a data analyst, it is important to have a clear view on the data that you are using. Understanding what each element refers to is therefore essential.
+  In the previous exercise, we created a vector with your winnings over the week. 
+  Each vector element refers to a day of the week but it is hard to tell which element belongs to which day. It would be nice if you could show that in the vector itself.
+  You can give a name to the elements of a vector with the names() function.
+
+some_vector <- c("John Doe", "poker player")
+names(some_vector) <- c("Name", "Profession")
+This code first creates a vector some_vector and then gives the two elements a name. The first element is assigned the name Name, while the second element is labeled Profession.
+          Name     Profession 
+    "John Doe" "poker player" 
+
+ You can also create a variable that contains the days of the week. This way you can use and re-use it.
+# The variable days_vector
+    days_vector <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday")
+# Assign the names of the day to roulette_vector and poker_vector
+    names(poker_vector) <-  days_vector 
+    names(roulette_vector) <- days_vector
+______________________________________________________________________________________________________________________________________________________
+
+CALCULATING TOTAL WINNINGS
+
+It is important to know that if you sum two vectors in R, it takes the element-wise sum. For example, the following three statements are completely equivalent:
+    c(1, 2, 3) + c(4, 5, 6)
+    c(1 + 4, 2 + 5, 3 + 6)
+    c(5, 7, 9)
+
+    a <- c(1, 2, 3) 
+    b <- c(4, 5, 6)
+    c <- a + b
+    
+  A_vector <- c(1, 2, 3)
+  B_vector <- c(4, 5, 6)
+# Take the sum of A_vector and B_vector
+  total_vector <- A_vector + B_vector
+# Print out total_vector
+  total_vector
+  
+  
+  First, you need to understand what the overall profit or loss per day of the week was. 
+  The total daily profit is the sum of the profit/loss you realized on poker per day, and the profit/loss you realized on roulette per day.
+  In R, this is just the sum of roulette_vector and poker_vector.
+# Assign to the variable total_daily how much you won or lost on each day in total (poker and roulette combined).
+
+# Poker and roulette winnings from Monday to Friday:
+    poker_vector <- c(140, -50, 20, -120, 240)
+    roulette_vector <- c(-24, -50, 100, -350, 10)
+    days_vector <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday")
+    names(poker_vector) <- days_vector
+    names(roulette_vector) <- days_vector
+
+# Assign to total_daily how much you won/lost on each day
+    total_daily <- poker_vector + roulette_vector
+
+SUM FUNCTION
+sum(): It calculates the sum of all elements of a vector. 
+
+# For example, to calculate the total amount of money you have lost/won with poker you do:
+    total_poker <- sum(poker_vector)
+# Total winnings with roulette
+    total_roulette <-  sum(roulette_vector)
+# Total winnings overall
+    total_week <- total_roulette + total_poker
+# Print out total_week
+    total_week
+# Check if you realized higher total gains in poker than in roulette 
+    total_poker>total_roulette    
+   
+______________________________________________________________________________________________________________________________________________________
+
+VECTOR SELECTION
+# Define a new variable based on a selection
+    poker_wednesday <- poker_vector[3]
+    
+To select elements of a vector (and later matrices, data frames, …), you can use square brackets. 
+Between the square brackets, you indicate what elements to select. For example, to select the first element of the vector, you type poker_vector[1]. 
+*****Notice that the first element in a vector has index 1, not 0 as in many other programming languages*****
+
+# Define a new variable based on a selection
+    poker_midweek <- poker_vector[c(2,3,4)]
+# Selects the first and fifth element of poker_vector:
+    poker_vector[c(1, 5)]
+    
