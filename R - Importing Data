@@ -8,9 +8,12 @@ Field names are used to give column names of data frame
 
 UTILS package in R (loaded by default in R)
     read.csv("states.csv", stringsAsFactors = FALSE)
+        Wrapper for CSV
         **IF set as FALSE, then variables will be strings, and not factors. MEANING they will ve CHARACTERS and not factors. 
         With stringsAsFactors, you can tell R whether it should convert strings in the flat file to factors.
-        By defaults stringsasfactors is TRUE
+        Default stringsasfactors is TRUE
+        Default header = TRUE
+        Default separator = ","
     If columns are strings, you can convert them into factors.
     Set it to false if strings should not be categorical dataframes.
 
@@ -18,12 +21,22 @@ What if file in datasets folder of home directory?
     path <- file.path("~", "datasets", "states.csv")
     "~/datasets/states.csv
     
+For example, these two are the same:
+    read.table("states.csv", header = TRUE, sep = ",", stringsasfactors = FALSE)
+    read.csv("states.csv", stringsasfactors = FALSE)
+    
 TAB-DELIMITED FILES
     read.delim("states.txt",stringsasfactors = FALSE)
+        Wrapper for tab-delimited files
         Default sep argument is "\t" (fields in a record are delimited by tabs) 
         Default header = TRUE (the first row contains the field names).
+        
+ For example, these 2 are the same:
+    read.table("states.txt", header = TRUE, sep ="\t", stringsasfactors = FALSE)
+    read.delim("states.txt", stringsasfactors = FALSE)
     
     read.table()
+        Main function
         Read any tabular file as a data frame
         Number of arguments is huge
         Default header = FALSE
@@ -53,3 +66,60 @@ TAB-DELIMITED FILES
 # Print lily and tom
     lily
     tom
+    
+You can specify column names, types, and classes.
+    col.names
+    colclasses (**useful if some should be factors and others characters** = no more stringsasfactors needed, 
+                  if a column is set to NULL, then the column is skipped and not loaded into the df)
+    coltype
+
+read.delim("my_file.txt", 
+           colClasses = c("character",
+                          "numeric",
+                          "logical"))
+
+# Previous call to import hotdogs.txt
+        hotdogs <- read.delim("hotdogs.txt", header = FALSE, col.names = c("type", "calories", "sodium"))
+# Display structure of hotdogs
+    str(hotdogs)
+# Edit the colClasses argument to import the data correctly: hotdogs2
+    hotdogs2 <- read.delim("hotdogs.txt", header = FALSE, 
+                       col.names = c("type", "calories", "sodium"),
+                       colClasses = c("factor", "NULL", "numeric"))
+# Display structure of hotdogs2
+    str(hotdogs2)
+    
+GO TO ?read.table to find more ways to import data and deal with regional differences and numbers
+read.csv2 (can separate semicolons)
+read.delim2
+
+________________________________________________________________________________________________________________________________________________________________________
+
+readr package
+datatable package
+read_csv
+read_tsv
+
+How to load readr package
+install.packages("readr")
+library(readr)
+
+read_csv("states.csv")
+Imports a data table
+Strings are not imported as factors by default 
+
+read_tsv (tab separated value)
+Strings are not imported as factors by default 
+
+
+utils package
+
+read.table()
+read.csv()
+read.delim()
+
+readr package
+
+read_delim()
+read_csv()
+read_tsv()
