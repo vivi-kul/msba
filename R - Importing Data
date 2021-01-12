@@ -114,12 +114,48 @@ Strings are not imported as factors by default
 
 utils package
 
-read.table()
+read.table() - main utils function
 read.csv()
 read.delim()
 
 readr package
 
-read_delim()
-read_csv()
+read_delim() - main readr function
+read_csv() **Assumes first row contains column names
 read_tsv()
+
+**USING CSV FUNCTION
+# Load the readr package
+    library(readr)
+# Import potatoes.CSV with read_csv(): potatoes
+    potatoes <- read_csv("potatoes.csv")
+
+USING TSV FUNCTION
+# readr is already loaded
+# Column names
+    properties <- c("area", "temp", "size", "storage", "method",
+                "texture", "flavor", "moistness")
+# Import potatoes.txt: potatoes
+    potatoes <- read_tsv("potatoes.txt",col_names = properties)
+# Call head() on potatoes
+    head(potatoes)
+    
+USING DELIM FUNCTION
+    read_delim("States.txt", delim ="/")
+        Default header = TRUE
+        Strings are not imported as factors by default
+        Takes two mandatory arguments: file (the file containing the data), delim (the character that separates the values in the data file)
+    Col_names is true by default
+        read_delim("states3.txt", delim = "/", col_names = FALSE) **Returns X123 variables as colnames
+        read_delim("states3.txt", delim = "/", col_names = c("state", "city", "pop", "area")
+    Col_types
+        Will be guessed from the first 30 rows
+        Can be specified manually
+        read_delim("states2.txt", delim ="/", col_types = "ccdd")
+        Use underscore to skip column
+    Skip and n_max
+        Used for large datasets
+        Skip will also skip the header row, so you need to specify the column headers again
+        read_delim("states2.txt", delim = "/", col_names = c("state", "city", "pop", "area"), skip = 2, n_max = 3)
+___________________________________________________________________________________________________________________________________________________________________________
+
