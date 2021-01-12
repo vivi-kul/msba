@@ -1,0 +1,55 @@
+5 types of data sources: Flat files, Excel, Databases, Web, Statistical software (SAS, SPSS)
+
+FLAT FILES (states.csv - Comma separated values)
+Fields are separates by a comma
+Fields will be columns in data frame
+Records will be rows in data frame
+Field names are used to give column names of data frame
+
+UTILS package in R (loaded by default in R)
+    read.csv("states.csv", stringsAsFactors = FALSE)
+        **IF set as FALSE, then variables will be strings, and not factors. MEANING they will ve CHARACTERS and not factors. 
+        With stringsAsFactors, you can tell R whether it should convert strings in the flat file to factors.
+        By defaults stringsasfactors is TRUE
+    If columns are strings, you can convert them into factors.
+    Set it to false if strings should not be categorical dataframes.
+
+What if file in datasets folder of home directory?
+    path <- file.path("~", "datasets", "states.csv")
+    "~/datasets/states.csv
+    
+TAB-DELIMITED FILES
+    read.delim("states.txt",stringsasfactors = FALSE)
+        Default sep argument is "\t" (fields in a record are delimited by tabs) 
+        Default header = TRUE (the first row contains the field names).
+    
+    read.table()
+        Read any tabular file as a data frame
+        Number of arguments is huge
+        Default header = FALSE
+        Default sep argument is "".
+       read.table("states2.txt", 
+                  header = TRUE,  **first row will be variables names**
+                  sep = "/", **specifies how fields in the file are separated"
+                  stringsasfactors = FALSE) **False bc we want to import strings as strings**
+                  
+                 # Path to the hotdogs.txt file: path
+                 path <- file.path("data", "hotdogs.txt")
+                 
+                 # Import the hotdogs.txt file: hotdogs
+                 hotdogs <- read.table(path, 
+                 sep = "\t", 
+                 col.names = c("type", "calories", "sodium"))
+                 
+                 # Call head() on hotdogs
+                 head(hotdogs)
+
+# Finish the read.delim() call
+    hotdogs <- read.delim("hotdogs.txt", header = FALSE, col.names = c("type", "calories", "sodium")) **if no header available, you can specify column names with col.names
+# Select the hot dog with the least calories: lily
+    lily <- hotdogs[which.min(hotdogs$calories), ] **which.min returns the index the smallest value in a vector
+# Select the observation with the most sodium: tom
+    tom <- hotdogs[which.max(hotdogs$sodium), ]
+# Print lily and tom
+    lily
+    tom
