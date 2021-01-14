@@ -1,1 +1,117 @@
+Basic syntax for an INNER JOIN, including all columns in both tables:
+
+SELECT *
+FROM left_table
+INNER JOIN right_table
+ON left_table.id = right_table.id;
+
+-- Ex: Select name fields (with alias) and region 
+SELECT cities.name as city, countries.name as country, region
+FROM cities
+  INNER JOIN countries
+    ON cities.country_code = countries.code;
+    
+Aliasing
+
+SELECT c1.name AS city, c2.name AS country
+FROM cities AS c1
+INNER JOIN countries AS c2
+ON c1.country_code = c2.code;
+
+-- Ex:
+SELECT c.code, name, region, e.year, fertility_rate, unemployment_rate
+  -- 1. From countries (alias as c)
+  FROM countries AS c
+  -- 2. Join to populations (as p)
+  INNER JOIN populations AS p
+    -- 3. Match on country code
+    ON c.code = p.country_code
+  -- 4. Join to economies (as e)
+  INNER JOIN economies AS e
+    -- 5. Match on country code and year
+    on c.code=e.code AND p.year=e.year;
+    
+USING
+Inner join with using
+...When joining tables with a common field name, e.g.
+
+SELECT *
+FROM countries
+  INNER JOIN economies
+    ON countries.code = economies.code
+You can use USING as a shortcut:
+
+SELECT *
+FROM countries
+  INNER JOIN economies
+    USING(code)
+
+SELECT c.name as country, c.continent, l.name as language, l.official
+  -- 1. From countries (alias as c)
+  FROM countries as c
+  -- 2. Join to languages (as l)
+  INNER JOIN languages as l
+    -- 3. Match using code
+    USING(code)
+
+SELF-JOIN
+
+SELECT p1.country_code,
+       p1.size AS size2010, 
+       p2.size AS size2015,
+       -- 1. calculate growth_perc
+       ((p2.size - p1.size)/p1.size * 100.0) AS growth_perc
+-- 2. From populations (alias as p1)
+FROM populations AS p1
+  -- 3. Join to itself (alias as p2)
+  INNER JOIN populations AS p2
+    -- 4. Match on country code
+    ON p1.country_code = p2.country_code
+        -- 5. and year (with calculation)
+        AND p1.year = p2.year - 5;
+        
+CASE WHEN AND THEN
+
+Often it's useful to look at a numerical field not as raw data, but instead as being in different categories or groups.
+You can use CASE with WHEN, THEN, ELSE, and END to define a new grouping field.
+
+SELECT name, continent, code, surface_area,
+    -- 1. First case
+    CASE WHEN surface_area > 2000000 THEN 'large'
+        -- 2. Second case
+        WHEN surface_area > 350000 THEN 'medium'
+        -- 3. Else clause + end
+        ELSE 'small' END
+        -- 4. Alias name
+        AS geosize_group
+-- 5. From table
+FROM countries;
+
+
+INTO
+
+SELECT country_code, size,
+  CASE WHEN size > 50000000
+            THEN 'large'
+       WHEN size > 1000000
+            THEN 'medium'
+       ELSE 'small' END
+       AS popsize_group
+INTO pop_plus       
+FROM populations
+WHERE year = 2015;
+
+-- 5. Select fields
+Select name, continent, geosize_group, popsize_group
+-- 1. From countries_plus (alias as c)
+from countries_plus as c
+  -- 2. Join to pop_plus (alias as p)
+  join pop_plus as p
+    -- 3. Match on country code
+    On c.code = p.country_code
+-- 4. Order the table    
+order by geosize_group asc;
+
+
+_______________________________________________________________________________________________________________________________________________________
 
