@@ -213,6 +213,117 @@ Watch out: Once you skip some lines, you also skip the first line that can conta
      library(data.table)
         fread can infer column types and separators, and is really fast
         Possible to specify numerous parameters
+        
+     fread() had two arguments: drop and select, to drop or select variables of interest.
+     Suppose you have a dataset that contains 5 variables and you want to keep the first and fifth variable, named "a" and "e":
+        fread("path/to/file.txt", drop = 2:4)
+        fread("path/to/file.txt", select = c(1, 5))
+        fread("path/to/file.txt", drop = c("b", "c", "d"))
+        fread("path/to/file.txt", select = c("a", "e"))
+        
+     # Import columns 6 and 8 of potatoes.csv: potatoes
+        potatoes <- fread("potatoes.csv", select = c(6, 8))
+     # Plot texture (x) and moistness (y) of potatoes
+        plot(potatoes$texture, potatoes$moistness)
      
+     The class of the result of fread() is both data.table and data.frame. 
+     read_csv() creates an object with three classes: tbl_df, tbl and data.frame.
 ___________________________________________________________________________________________________________________________________________________________________________
 
+READXL
+     First familiarize yourself with the excel file, then import in R
+    excel_sheets() - list different sheets
+    read_excel() - actually import data into R (handles xls & xlxs files)
+    
+dir() reveals if file is already in our working directory
+excel_sheets("city.xls") - just view different sheet names
+read_excel("cities.xlsx", sheet = 2)
+read_excel("cities.xlsx", sheet = "year_2000")
+        
+        data <- read_excel("data.xlsx", 
+                            sheet = "my_sheet",
+                            col_names = TRUE, (**TRUE is default and choses first row as header, character vector, manually specified, **R assigns names itself with FALSE))
+                            col_types = NULL, 
+                            skip = 0) (**skip = 2 would skip header and first row)
+
+        data <- read_excel("cities.xlsx", 
+                            col_types = c("text", "numeric", "date", "blank"))
+
+# Load the readxl package
+    library(readxl)
+    dir() - view if its in directory
+# Print the names of all worksheets
+    excel_sheets("urbanpop.xlsx")
+
+# Read the sheets, one by one
+    pop_1 <- read_excel("urbanpop.xlsx", sheet = 1)
+    pop_2 <- read_excel("urbanpop.xlsx", sheet = 2)
+    pop_3 <- read_excel("urbanpop.xlsx", sheet = 3)
+# Put pop_1, pop_2 and pop_3 in a list: pop_list
+    pop_list <- list(pop_1, pop_2, pop_3)
+# Display the structure of pop_list
+    str(pop_list)
+    
+  USING LAPPLY
+    my_workbook <- lapply(excel_sheets("data.xlsx"), read_excel, path = "data.xlsx")
+    
+# Read all Excel sheets with lapply(): pop_list
+    pop_list <- lapply(excel_sheets("urbanpop.xlsx"),read_excel, path="urbanpop.xlsx")
+# Display the structure of pop_list
+    str(pop_list)
+
+# Import the first Excel sheet of urbanpop_nonames.xlsx (specify col_names): pop_b
+    cols <- c("country", paste0("year_", 1960:1966))
+    pop_b <- read_excel("urbanpop_nonames.xlsx", col_names = cols)
+# Print the summary of pop_b
+    summary(pop_b)
+    
+# Import the second sheet of urbanpop.xlsx, skipping the first 21 rows: urbanpop_sel
+    urbanpop_sel <- read_excel("urbanpop.xlsx", sheet = 2, col_names = FALSE, skip = 21)
+# Print out the first observation from urbanpop_sel
+    head(urbanpop_sel, n=1)
+    urbanpop_sel[1, ]
+
+GDATA package
+    read.xls()
+    Supports only xls
+    support xlsx with additional driver
+    Is an extension of the utils package
+    
+    xls -Perl- CSV -read.csv() - R data frame
+                    - read.table(>15 arguments)
+    It basically comes down to two steps: 
+    (1) converting the Excel file to a .csv file using a Perl script, 
+    (2) and then reading that .csv file with the read.csv() function that is loaded by default in R, through the utils package.
+
+    install.packages("gdata")
+    library(gdata)
+    read.xls("cities.xls")
+    
+# Load the gdata package
+    library(gdata)
+# Import the second sheet of urbanpop.xls: urban_pop
+    urban_pop <- read.xls("urbanpop.xls", sheet =2)
+# Print the first 11 observations using head()
+    head(urban_pop, n = 11)
+    
+# Column names for urban_pop
+columns <- c("country", paste0("year_", 1967:1974))
+# Finish the read.xls call
+urban_pop <- read.xls("urbanpop.xls", sheet = 2,
+                      skip = 50, header = FALSE, stringsAsFactors = FALSE,
+                      col.names = columns)
+# Print first 10 observation of urban_pop
+head(urban_pop, n=10)
+
+# Add code to import data from all three sheets in urbanpop.xls
+    path <- "urbanpop.xls"
+    urban_sheet1 <- read.xls(path, sheet = 1, stringsAsFactors = FALSE)
+    urban_sheet2 <- read.xls(path, sheet = 2, stringsAsFactors = FALSE)
+    urban_sheet3 <- read.xls(path, sheet = 3, stringsAsFactors = FALSE)
+# Extend the cbind() call to include urban_sheet3: urban
+    urban <- cbind(urban_sheet1, urban_sheet2[-1],urban_sheet3[-1])
+# Remove all rows with NAs from urban: urban_clean
+    urban_clean <- na.omit(urban)
+# Print out a summary of urban_clean
+    summary(urban_clean)
