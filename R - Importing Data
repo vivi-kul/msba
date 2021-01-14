@@ -327,3 +327,97 @@ head(urban_pop, n=10)
     urban_clean <- na.omit(urban)
 # Print out a summary of urban_clean
     summary(urban_clean)
+_______________________________________________________________________________________________________
+
+XLCONNECT
+    Working with excel files thru R
+    Bridge between Excel and R
+    Works with xls and xlsx files
+    
+    **To get a clear overview of file first, without opening it:
+    my_book <- loadWorkbook("urbanpop.xlsx")
+    sheets <- getSheets(my_book)
+    all <- lapply(sheets, readWorksheet, object = my_book)
+    str(all)
+    
+    install.packages("XLConnect")
+    library("XLConnect")
+    book <- loadWorkbook("cities.xlsx")
+    str(book) - workbook object in R for class
+    getsheets(book) - see sheets
+    readWorksheet(book, sheet = "name"/index)
+    
+    readWorksheet(book, sheet ="year_2000", startrow=3, endrow=4, startcol=2, header=FALSE)
+    
+# Load the XLConnect package
+    library(XLConnect)
+# Build connection to urbanpop.xlsx: my_book
+    my_book <- loadWorkbook("urbanpop.xlsx")
+# Print out the class of my_book
+    class(my_book)
+
+# Build connection to urbanpop.xlsx
+    my_book <- loadWorkbook("urbanpop.xlsx")
+# List the sheets in my_book
+    getSheets(my_book)
+# Import the second sheet in my_book
+    readWorksheet(my_book, sheet = 2)
+
+# Build connection to urbanpop.xlsx
+    my_book <- loadWorkbook("urbanpop.xlsx")
+# Import columns 3, 4, and 5 from second sheet in my_book: urbanpop_sel
+    urbanpop_sel <- readWorksheet(my_book, sheet = 2, startCol=3, endCol=5)
+# Import first column from second sheet in my_book: countries
+    countries <- readWorksheet(my_book, sheet = 2, startCol=1, endCol=1)
+# cbind() urbanpop_sel and countries together: selection
+    selection <- cbind(countries, urbanpop_sel)
+    
+ADAPTING DATA
+    pop_2010 <- data.frame(Capital = c("New York", "Berlin", "Madrid", "Stockholm"), 
+                Population = c(3323,2331,1223,1232))
+    would create a df
+    
+    to start data in new sheet:
+    pop_2010 <- ...
+    library(XLConnect)
+    book <- loadWorkbook("cities.xlsx")
+    createSheet(book, name="year_2010")
+    writeWorksheet(book, pop_2010, sheet="year_2010")
+            writeWorksheet() takes three arguments: 
+                the workbook, 
+                the data you want to add, 
+                and finally the sheet you want to add data to.
+    saveWorkbook(book, file="cities2.xlsx") **needed to actually save and fill new worksheet, do new filename to not overwrite original sheet)
+            saveWorkbook() takes two arguments: 
+                the workbook 
+                and the name of the Excel file you want to create as a string.
+    renameSheet(book, "oldname","newname"
+    then save again saveWorkbook(book, file="cities3.xlsx")
+    removeSheet(book, sheet="Y2010")
+    
+How to create a new sheet
+    my_book <- loadWorkbook("urbanpop.xlsx")
+# Add a worksheet to my_book, named "data_summary"
+    createSheet(my_book, name ="data_summary")
+# Use getSheets() on my_book
+    getSheets(my_book)
+   
+# Build connection to urbanpop.xlsx: my_book
+    my_book <- loadWorkbook("urbanpop.xlsx")
+# Rename "data_summary" sheet to "summary"
+    renameSheet(my_book,"data_summary", "summary")
+# Print out sheets of my_book
+    getSheets(my_book)  
+# Save workbook to "renamed.xlsx"
+    saveWorkbook(my_book,file="renamed.xlsx")
+
+# Load the XLConnect package
+    library(XLConnect)
+# Build connection to renamed.xlsx: my_book
+    my_book <- loadWorkbook("renamed.xlsx")
+# Remove the fourth sheet
+    removeSheet(my_book, sheet=4)
+# Save workbook to "clean.xlsx"
+    saveWorkbook(my_book, file="clean.xlsx")
+   
+   
