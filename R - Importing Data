@@ -142,7 +142,7 @@ USING TSV FUNCTION
     
 USING DELIM FUNCTION
     read_delim("States.txt", delim ="/")
-        Default header = TRUE
+        Default header = TRUE (you could set col_names = FALSE if needed)
         Strings are not imported as factors by default
         Takes two mandatory arguments: file (the file containing the data), delim (the character that separates the values in the data file)
     Col_names is true by default
@@ -150,12 +150,69 @@ USING DELIM FUNCTION
         read_delim("states3.txt", delim = "/", col_names = c("state", "city", "pop", "area")
     Col_types
         Will be guessed from the first 30 rows
-        Can be specified manually
+        Col types can be specified manually with col_types and a string
         read_delim("states2.txt", delim ="/", col_types = "ccdd")
         Use underscore to skip column
-    Skip and n_max
+            If NULL then default from readr package will try to find types 
+            Each character can denote the class of the column:
+                c character
+                d double
+                i integer
+                l logical
+                _ skips the column as a whole
+        
+        # Import all data, but force all columns to be character: potatoes_char
+         potatoes_char <- read_tsv("potatoes.txt", col_types = "cccccccc", col_names = properties)
+   
+   Skip and n_max
         Used for large datasets
+        Skip specifies the number of lines you're ignoring in the flat file before actually starting to import data.
         Skip will also skip the header row, so you need to specify the column headers again
         read_delim("states2.txt", delim = "/", col_names = c("state", "city", "pop", "area"), skip = 2, n_max = 3)
+        
+        n_max specifies the number of lines you're actually importing.
+        
+        Through skip and n_max you can control which part of your flat file you're actually importing into R.
+        Say for example you have a CSV file with 20 lines, and set skip = 2 and n_max = 3, you're only reading in lines 3, 4 and 5 of the file.
+
+Watch out: Once you skip some lines, you also skip the first line that can contain column names
+
+    Collector functions
+        Another way of setting the types of the imported columns is using collectors. 
+        Collector functions can be passed in a list() to the col_types argument of read_ functions to tell them how to interpret values in a column.
+            col_integer(): the column should be interpreted as an integer.
+            col_factor(levels, ordered = FALSE): the column should be interpreted as a factor with levels.
+        
+   # readr is already loaded
+   # Column names
+     properties <- c("area", "temp", "size", "storage", "method",
+                "texture", "flavor", "moistness")
+   # Import potatoes.txt using read_delim(): potatoes
+     potatoes <- read_delim("potatoes.txt", delim= "\t", col_names = FALSE)
+   # Print out potatoes
+     potatoes
+    
+   # Import 5 observations from potatoes.txt: potatoes_fragment
+     potatoes_fragment <- read_tsv("potatoes.txt", skip = 6, n_max = 5, col_names = properties)
+   
+   # Import all data, but force all columns to be character: potatoes_char
+     potatoes_char <- read_tsv("potatoes.txt", col_types = "cccccccc", col_names = properties)
+     
+   # The collectors you will need to import the data
+     fac <- col_factor(levels = c("Beef", "Meat", "Poultry"))
+     int <- col_integer()
+   # Edit the col_types argument to import the data correctly: hotdogs_factor
+     hotdogs_factor <- read_tsv("hotdogs.txt", col_names = c("type", "calories", "sodium"), col_types = list(fac,int,int))
+   # Display the summary of hotdogs_factor
+     summary(hotdogs_factor)
+     
+     data.table
+        function to import data: fread()
+        
+     install.packages("data.table")
+     library(data.table)
+        fread can infer column types and separators, and is really fast
+        Possible to specify numerous parameters
+     
 ___________________________________________________________________________________________________________________________________________________________________________
 
