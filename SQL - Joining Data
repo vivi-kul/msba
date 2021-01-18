@@ -1,3 +1,11 @@
+Types of Joins
+Inner Joins: Self-Join
+Outer Joins: Left, Right, Full
+Cross Joins
+Semi-Joins/Anti-Joins
+
+Self-, semi-, and anti-joins don't have self-built-in syntax
+
 Note: Multi line comments with /* and */
 Basic syntax for an INNER JOIN, including all columns in both tables:
 
@@ -231,6 +239,11 @@ ________________________________________________________________________________
 Join for all combinations between table A and B
 Same syntax as earlier in the course "CROSS JOIN"
 
+Select table1.id AS id1, 
+	table2.id AS id2
+From table1
+Cross Join table2;
+
 -- 4. Select fields
 SELECT c.name AS city, l.name AS language
 -- 1. From cities (alias as c)
@@ -239,6 +252,7 @@ FROM cities AS c
   CROSS JOIN languages AS l
 -- 3. Where c.name like Hyderabad
 WHERE c.name LIKE 'Hyder%';
+
 
 __________________________________________________________________________
 
@@ -399,6 +413,7 @@ SUBQUERIES
 Most common: Inside WHERE clause
 2nd most common: Inside SELECT clause
     *Need to give subquery an ALIAS in Select clause
+3rd: Inside FROM clause
 
 Example: WHERE clause
 
@@ -435,9 +450,90 @@ Select *
 WHERE life_expectancy > 1.15 * (SELECT AVG(life_expectancy) FROM populations WHERE year = 2015)
   AND year = 2015;
  
+ SUBQUERY INSIDE FROM CLAUSE
+ Include Subquery as Temporary Table in FROM clause:
  
+ SELECT DISTINCT monarchs.continent, subquery.max_perc
+ FROM monarchs,
+ 	(SELECT continent, MAX(women_parli_perc) AS max_perc
+	FROM states
+	GROUP BY continent) AS subquery
+ WHERE monarchs.continent = subquery.continent
+ ORDER BY continent; 
 
-    
+ Another example: 
+ 
+ -- Select fields
+SELECT local_name, lang_num
+  -- From countries
+  FROM countries,
+  	-- Subquery (alias as subquery)
+  	(SELECT code, COUNT(name) as lang_num
+  	 FROM languages
+  	 GROUP BY code) AS subquery
+  -- Where codes match
+  WHERE countries.code = subquery.code
+-- Order by descending number of languages
+ORDER BY lang_num desc;
   
+_____________________________________________________________________________________________________________________
 
+Challenge 1:
+
+-- Select fields
+SELECT DISTINCT c.name, e.total_investment, e.imports
+  -- From table (with alias)
+  FROM countries AS c
+    -- Join with table (with alias)
+    LEFT JOIN economies AS e
+      -- Match on code
+      ON (c.code = e.code
+      -- and code in Subquery
+        AND c.code IN (
+          SELECT l.code
+          FROM languages AS l
+          WHERE official = 'true'
+        ) )
+  -- Where region and year are correct
+  WHERE c.region = 'Central America' AND e.year = 2015
+-- Order by field
+ORDER BY name asc;
+
+Challenge 2: 
+
+-- Select fields
+SELECT c.region, c.continent, AVG(p.fertility_rate) AS avg_fert_rate
+  -- From left table
+  FROM countries AS c
+    -- Join to right table
+    INNER JOIN populations AS p
+      -- Match on join condition
+      ON c.code = p.country_code
+  -- Where specific records matching some condition
+  WHERE p.year= 2015
+-- Group appropriately
+GROUP BY c.region, c.continent
+-- Order appropriately
+ORDER BY avg_fert_rate asc;
+
+Challenge 3:
+
+-- Select fields
+SELECT name, country_code, city_proper_pop, metroarea_pop,  
+      -- Calculate city_perc
+      city_proper_pop / metroarea_pop * 100 AS city_perc
+  -- From appropriate table
+  FROM cities
+  -- Where 
+  WHERE name IN
+    -- Subquery
+    (SELECT capital
+     FROM countries
+     WHERE (continent = 'Europe'
+        OR continent LIKE '%America'))
+       AND metroarea_pop IS NOT NULL
+-- Order appropriately
+ORDER BY city_perc desc
+-- Limit amount
+LIMIT 10;
 
