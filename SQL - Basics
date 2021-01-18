@@ -33,6 +33,10 @@ FROM table_source
 SELECT - Columns                         SELECT [ALL|DISTINCT] [TOP n [PERCENT] [WITH TIES]]
   ALL  (*)                               column_specification [[AS] result_column]
   DISTINCT                               [, column_specification [[AS] result_column]] ...
+  TOP                                    We often use the TOP clause to limit the number of rows returned
+                                         Using TOP with the WHERE clause, the table is filtered by the WHERE clause first and then the TOP is applied to the filtered results
+                                         Returning to the TOP statement, the TOP statement without any modifiers picks the first n-number of rows 
+                                         in the filtered and sorted intermediate result set formed by the FROM, WHERE & ORDER BY clauses
   TOP n/BOTTOM
   TOP n PERCENT
   TOP n WITH TIES - Include additional rows that match the values in the last row
@@ -107,6 +111,7 @@ IN
                                        begin_expression AND end_expression
 BETWEEN 
                                        WHERE test_expression [NOT] LIKE...
+   **BETWEEN is inclusive
 LIKE
   Wildcard symbols
   %     - Matches an string of zero or more characters
@@ -127,6 +132,7 @@ WHERE ContactName LIKE 'a%o'	  Finds any values that start with "a" and ends wit
   
 ORDER BY - order of results in rows    ORDER BY expression [ASC|DESC] [, expression [ASC|DESC]]...
                                        Default sequence: Nulls, Special characters, Numbers, Letters
+                                       By default it is ascending
   ASC/DESC
   
                                        ORDER BY order_by_list
