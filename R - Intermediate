@@ -271,6 +271,6 @@ while (speed > 30) {
     speed <- speed - 11
   } else {
     print("Slow down!")
-    speed <- 6
+    speed <- speed - 6
   }
 }
