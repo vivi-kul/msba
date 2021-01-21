@@ -1,5 +1,61 @@
 RELATIONAL OPERATORS
 
 == Equality
+!= Inequality
+< and > Less than or greater than
+=< and >= Less than or equal to, greater than or equal to
 
-hi <= c(1,2) for loop....
+We can compare: Logicals, numerics, character strings, logicals with numerics
+# Comparison of logicals
+TRUE == FALSE
+# Comparison of numerics
+(-6*14)!=(17-101)
+# Comparison of character strings
+"user" == "useR"
+# Compare a logical with a numeric
+TRUE == 1
+
+String comparisons: 
+R is case sensitive!!!
+
+All these are TRUE: 
+3 == (2 + 1)
+"intermediate" != "r"
+TRUE != FALSE
+"Rchitect" != "rchitect"
+
+All there are FALSE: 
+(1 + 2) > 4
+"dog" < "Cats"
+TRUE <= FALSE
+
+
+COMPARING VECTORS
+
+Relational operators also work on vectors:
+
+# The linkedin and facebook vectors have already been created for you
+  linkedin <- c(16, 9, 13, 5, 2, 17, 14)
+  facebook <- c(17, 7, 5, 16, 8, 13, 14)
+# Popular days
+  linkedin > 15
+# Quiet days
+  linkedin <= 5
+# LinkedIn more popular than Facebook
+  linkedin > facebook
+
+COMPARE MATRICES
+
+Relational operators also work on matrices:
+
+# The social data has been created for you
+linkedin <- c(16, 9, 13, 5, 2, 17, 14)
+facebook <- c(17, 7, 5, 16, 8, 13, 14)
+views <- matrix(c(linkedin, facebook), nrow = 2, byrow = TRUE)
+
+# When does views equal 13?
+views == 13
+
+# When is views less than or equal to 14?
+views <= 14
+
