@@ -297,3 +297,28 @@ while (speed > 30) {
     speed <- speed - 6
   }
 }
+
+Exercise:
+Finish the while loop so that it:
+- prints out the triple of i, so 3 * i, at each run.
+- is abandoned with a break if the triple of i is divisible by 8, but still prints out this triple before breaking.
+
+If a number is divisible or not:
+To check if the triple of i is divisible by 8, use the condition (i * 3) %% 8 == 0. 
+The execution of %% has priority over * so you have to use parentheses to execute the multiplication first.
+
+# Initialize i as 1 
+i <- 1
+
+# Code the while loop
+while (i <= 10) {
+  print(i * 3)
+  if ( (i * 3) %% 8 == 0) {
+    print (i*3)
+    break
+  }
+  i <- i + 1
+}
+________________________________________________________________________________________________________________________________________________________________________________
+
+FOR LOOP
