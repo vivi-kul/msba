@@ -1,5 +1,5 @@
 1) CASE WHEN
-
+2) Subqueries
 
 ___________________________________________________________________________________________________________________________________
 
@@ -207,5 +207,12 @@ GROUP BY country;
 	ROUND(AVG(CASE WHEN m.season='2014/2015' AND m.home_goal = m.away_goal THEN 1
 			 WHEN m.season='2014/2015' AND m.home_goal != m.away_goal THEN 0
 			 END),2) AS pct_ties_2014_2015
+
+____________________________________________________________________________________________________________________________________
+
+SUBQUERIES
+
+SELECT 3 * AVG(home_goal + away_goal)
+FROM matches_2013_2014;
 
 
