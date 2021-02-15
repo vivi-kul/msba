@@ -228,6 +228,13 @@ GROUP BY country;
 ____________________________________________________________________________________________________________________________________
 
 SUBQUERIES
+-- Can be placed in any part of the query
+-- Can be used for: Scalar quantities, a list, a table. 
+-- Compare groups to summarized values
+-- Reshape data
+-- Combining data that cannot be joined 
+
+-- Simple subquery: Can be evaluated idependently from the outer query, evaluated 1x/entire statement
 
 --Subquery in SELECT
 
@@ -235,6 +242,19 @@ SELECT 3 * AVG(home_goal + away_goal)
 FROM matches_2013_2014;
 
 -- Subquery in WHERE
+-- Can only return a single column
+
+Which matches in 2012/2013 season scored home goals higher than overall average?
+
+SELECT date, hometeam_id, awayteam_id, home_goal, away_goal
+FROM match
+WHERE season = '2012/2012'
+	AND home_goal > (SELECT AVG(home_goal) FROM match);
+
+Exercise:
+Generate a list of matches where the total goals scored (for both teams in total) 
+is more than 3 times the average for games in the matches_2013_2014 table, 
+which includes all games played in the 2013/2014 season.
 
 SELECT 
 	-- Select the date, home goals, and away goals scored
@@ -246,4 +266,29 @@ FROM  matches_2013_2014
 WHERE (home_goal + away_goal) > 
        (SELECT 3 * AVG(home_goal + away_goal)
         FROM matches_2013_2014); 
+
+-- Subqueries in FROM
+-- Restructuring and transforming data
+-- Prefiltering the data
+-- Calculate aggregates of aggregates
+-- Can have multiple subqueries in one FROM statement (Alias and Join them)
+-- You can join a subquery to a table in FROM (column in subquery that is used in join)
+
+
+Which team has the highest average of homegoals scored?
+
+SELECT team, home_avg
+FROM (
+	SELECT 
+		t.team_long_name as team, 
+		AVG(.home_goal) AS home_avg
+	FROM match AS m
+	LEFT JOIN team AS t
+	ON m.hometeam_id = t.team_api_id
+	WHERE season='2011/2012'
+	GROUP BY team
+	) AS subquery
+ORDER BY home_avg DESC
+LIMIT 3;
+
 
