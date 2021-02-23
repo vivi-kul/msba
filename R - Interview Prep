@@ -1,0 +1,302 @@
+1. What are the different data structures in R?
+
+Vector:	A vector is a sequence of data elements of the same basic type. Members in a vector are called components.
+List:	Lists are the R objects which contain elements of different types like − numbers, strings, vectors or another list inside it.
+Matrix:	A matrix is a two-dimensional data structure. Matrices are used to bind vectors from the same length.  
+        All the elements of a matrix must be of the same type (numeric, logical, character, complex).
+Dataframe:	A data frame is more generic than a matrix, i.e different columns can have different data types (numeric, character, logical, etc). 
+            It combines features of matrices and lists like a rectangular list.
+            
+            
+2. How to load a .csv file in R?
+
+read.csv("file path.csv")
+
+3. What is R markdown and what is the use of it?
+
+RMarkdown is a reporting tool provided by R. With the help of Rmarkdown, you can create high quality reports of your R code. 
+The output format of Rmarkdown can be:
+  HTML
+  PDF
+  WORD
+
+4. How do you install a package in R?
+
+install.packages("<package name>")
+
+5. What are the steps to build and evaluate a linear regression model in R? 
+
+Start off by dividing the data into train and test sets, this step is vital because you will be building the model on the train set and evaluating it’s performance on the test set.
+You can do this using the sample.split() function from the “catools” package. This function gives an option of split-ratio, which you can specify according to your needs.
+
+library(caTools)
+sample.split(house$price, SplitRatio=0.65) -> mysplit
+subset(house,mysplit==T) -> train
+subset(house,mysplit==F) -> test
+
+Once, you are done splitting the data into training and test sets, You can go ahead and build the model on the train set.
+The “lm()” function is used to build a model.
+
+lm(price~,train) -> model1
+
+Finally, you can predict the values on the test set using the predict() function
+
+predict(model1,newdata=test) -> result
+final <- cbind(test$price, result)
+
+The final step would be to find out the RMSE, the lower the RMSE value, the better the prediction.
+
+rmse <- sqrt((mean((final$v1-final$result)^2)))
+rmse
+
+6. Name some packages in R that can be used for data imputation.
+
+MICE, Amerlia, missForest, Hmisc, Mi, imputeR
+
+7. Explain about a confusion matrix in R
+
+It can be used to evaluate the accuracy of the model built.
+It calculates a cross-tabulation of observed and predicted classes. 
+
+This can be done using confusionmatrix() from the caTools package. 
+confusionMatrix(test$Salary, result)
+
+8. How would you write a custom funtion in R?
+
+This is the syntax to write a custom function In R:
+
+<object-name>=function(x){
+—
+—
+—
+}
+
+Let’s look at an example to create a custom function in R ->
+
+fun1<-function(x){ ifelse(x>5,100,0) } 
+v<-c(1,2,3,4,5,6,7,8,9,10)
+fun1(v)->v 
+
+9. Name some functions available in the dplyr package. 
+
+filter
+select
+mutate
+arrange
+count
+
+10. What is a Random Forest? How do you build and evaluate a Random Forest in R?
+
+Random Forest is an ensemble classifier made using many decision tree models. 
+It combines the results from many decision tree models and this result is usually better than the result of any individual model.
+
+Split the data into a test and train set.
+Build random forest model on the train set->
+  randomForest(smoke~.,birth)->mod1
+Now, we’ll predict the model on the test set->
+  predict(mod1,test)->result
+  
+11. Tell me something about shinyR. 
+
+Shiny is an R package that makes it easy to build interactive web apps straight from R. 
+You can host standalone apps on a webpage or embed them in Rmarkdown documents or build dashboards. 
+You can also extend your Shiny apps with CSS themes, htmlwidgets, and JavaScript actions.
+
+12. What is the advantage of using apply family of functions in R?
+
+The apply function allows us to make entry-by-entry changes to data frames and matrices.
+The usage in R is as follows:
+  apply(X, MARGIN, FUN, …)
+where:
+X is an array or matrix;
+MARGIN is a variable that determines whether the function is applied over rows (MARGIN=1), columns (MARGIN=2), or both (MARGIN=c(1,2));
+FUN is the function to be applied.
+If MARGIN=1, the function accepts each row of X as a vector argument, and returns a vector of the results. Similarly, if MARGIN=2 the function acts on the columns of X. 
+Most impressively, when MARGIN=c(1,2) the function is applied to every entry of X.
+Advantage:
+With the apply function we can edit every entry of a data frame with a single line command. No auto-filling, no wasted CPU cycles.
+
+13. What packages are used for data mining in R?
+Some packages used for data mining in R:
+
+  data.table- provides fast reading of large files
+  rpart and caret- for machine learning models.
+  Arules- for associaltion rule learning.
+  GGplot- provides varios data visualization plots.
+  tm- to perform text mining.
+  Forecast- provides functions for time series analysis
+
+14. Give examples of “rbind()” and “cbind()” functions in R
+Cbind(): As the name suggests, it is used to bind two columns together. 
+One fact to be kept in mind while binding two columns is, the number of rows in both the columns need to be same.
+    cbind(Marks,Percentage)
+
+15. Give examples of while and for loop in R.
+
+While loop:
+  sparta <- "This is Sparta!"
+  i<- 1
+  while (i<=5) {
+    print(sparta)
+    i<-i+1
+   }
+ 
+ For loop:
+  fruits <- c("apples","oranges","banana")
+    for(i in fruits) {
+      print(i)
+    }
+
+16. Give examples of “select” and “filter” functions from “dplyr” package.
+
+Select: This function from “dplyr” package is used to select some specific columns from the data-set
+  Birth_weight %>% select(1,2,3)->birth
+  Birth_weight %>% select(-5)->birth
+Filter: This function from “dplyr” package is used to filter out some rows on the basis of a condition:
+  Birth_weight %>% filter(mother_age>35)->birth
+  Birth_weight %>% filter(baby_wt>125 & smoke=="smoker")->birth
+
+17. What is the use of stringR package. Give some examples of the functions in Stringr.
+
+Some functions in StringR:
+Initial:
+  fruit->
+Converting the strings into capital:
+str_to_upper(fruit)
+fruit_capital-R Interview Questions-Edureka
+Finding the count of number of letters:
+str_count(fruit)
+
+18. How would you make multiple plots onto a single page in R?
+
+Plotting multiple plots onto a single page using base graphs is quite easy:
+For, example if you want to plot 4 graphs onto the same pane, you can use the below command:
+par(mfrow=c(2,2))
+
+19. How would you create a scatterplot using ggplot2 package?
+
+A scatter-plot can be used to visualize the correlation between two or more entities at the same time.
+How to make a scatter-plot using ggplot2 package:
+
+ggplot(iris,aes(y=Sepal.Length,x=Petal.Length))+geom_point()
+
+20. Given a vector of values, how would you convert it into a time series object?
+Let’s say this is our vector-> 
+    a<-c(1,2,3,4,5,6,7,8,9)
+To convert this into a time series object->
+  as.ts(a)->a
+Let’s plot this:
+  ts.plot(a)
+
+21. What is the difference between a bar-chart and a histogram? Where would you use a bar-chart and where would you use a histogram?
+
+People most often get confused where to use a histogram and where to use a bar-graph. 
+One simple point to be kept  in mind is, histograms are used to plot the distribution of a continuous variable and 
+bar-charts are used to plot the distribution of a categorical variable.
+Histogram: Continuous variable on x axis
+Bar graph: categorical variable on x axis
+
+
+22. How would you create a box-plot using “plotly”?
+This is the command to create a box-plot in R:
+  plot_ly(house,y=~price,x=~rooms,color=~rooms,type="box")
+
+23. How would you do a left and right join in R?
+
+left_join(employee_designation,employee_salary,by="name")
+right_join(employee_designation,employee_salary,by="name") 
+
+24. What is a factor? How would you create a factor in R?
+Conceptually, factors are variables in R which take on a limited number of different values; such variables are often referred to as categorical variables. 
+One of the most important use of factors is in statistical modeling; since categorical variables enter into statistical models differently than continuous variables, 
+storing data as factors ensures that the modeling functions will treat such data correctly.
+
+Converting the character vector into a factor can be done using the as.factor() function:
+  as.character(fruit)->fruit
+Looking at data type: class(fruit)
+
+24. Write a custom function which will replace all the missing values in a vector with the mean of values.
+
+Let’s take this vector:
+a<-c(1,2,3,NA,4,5,NA,NA)
+Now, let’s write the function to impute the values:
+  mean_impute<-function(x){
+    ifelse(is.na(x),mean(x,na.rm = T),x)
+  }
+  
+25. Name some functions which can be used for debugging in R?
+
+traceback()
+debug()
+browser()
+trace()
+recover()
+
+26. How would you check the distribution of a categorical variable in R?
+
+We would often want to find out how are the values of a categorical variable distributed.
+We can use the table() function to find the distribution of categorical values.
+  table(iris$Species)
+Now, let’s find out the percentage distribution of these values.
+  table(iris$Species)/nrow(iris)
+
+27. How to rename column headers?
+
+The “colnames()” function is used to rename the columns.
+  colnames(fruits)<-c("name","cost")
+  
+28. How would you find the number of missing values in a dataset and remove all of them? 
+
+This Code gives the number of missing values->
+  sum(is.na(employee))
+Now, let’s delete the missing values:
+  na.omit(employee)
+
+
+29. What is correlation? How would you measure correlation in R?
+
+Correlation is a measure to find the  strength of association between two variables. 
+We can use the cor() function in R to find the correlation coefficient.
+Let’s find the extent of correlation between these variables, using the cor() function
+  cor(iris[-5])
+If the correlation coefficient is closer to +1, then there is a strong positive relation between the variables. 
+Similarly, if the correlation coefficient is closer to -1, then there would be a strong negative correlation between the two variables.
+
+30. From the below data-set, extract only those values where Age>60 and Sex=”F”.
+
+We can do it using the “dplyr” package. “dplyr” is a package which provides many functions for data manipulation, one such function is filter().
+Let’s  go ahead and perform the desired task using the filter() function
+  AARP %>% filter(Age>60 & Sex=="F")
+  
+31. Difference between library () and require () functions in R language.
+
+Library () function gives an error message display, if the desired package cannot be loaded.	It loads the packages whether it is already loaded or not.
+
+Require () function is used inside function and throws a warning messages whenever a particular package is not Found. 
+It just checks that it is loaded, or loads it if it isn’t (use in functions that rely on a certain package).
+The documentation explicitly states that neither function will reload an already loaded package.
+
+32. What is R?
+
+R is a programming language which is used for developing statistical software and data analysis. It is being increasingly deployed for machine learning applications as well.
+
+33. What is difference between lapply and sapply?
+
+lapply is used to show the output in the form of list whereas sapply is used to show the output in the form of vector or data frame
+
+34. How many data structures R has?
+
+5: Vector, Data Frame, List, Matrix, Array
+
+35. Define Poison regression.
+
+It is used to predict the outcome variable which represents counts from the given set of continuous predictor variable.
+
+36. How do you get the name of the current working directory in R?
+
+The command getwd() gives the current working directory in the R environment
+
+37. How do you access the element in the 2nd column and 4th row of a matrix named M?
+
+M[4,2]
+
