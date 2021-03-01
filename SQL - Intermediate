@@ -654,12 +654,20 @@ WHERE
 ORDER BY (home_goal + away_goal) DESC;
 
 
-SELECT 
-	c.name,
-	m.season,
-	(home_goal, away_goal) AS goals,
-	AVG(home_goal + away_goal) OVER(PARTITION BY m.season,c.name) AS season_ctry_avg
-FROM country AS c
-LEFT JOIN match AS m
-ON c.id = m.country_id
+SELECT
+	date,
+	season,
+	home_goal,
+	away_goal,
+	CASE WHEN hometeam_id = 8673 THEN 'home' 
+		 ELSE 'away' END AS warsaw_location,
+    -- Calculate the average goals scored partitioned by season
+    AVG(home_goal) OVER(partition by season) AS season_homeavg,
+    AVG(away_goal) OVER(partition by season) AS season_awayavg
+FROM match
+-- Filter the data set for Legia Warszawa matches only
+WHERE 
+	hometeam_id = 8673 
+    OR awayteam_id = 8673
+ORDER BY (home_goal + away_goal) DESC;
 
