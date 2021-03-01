@@ -569,7 +569,26 @@ ________________________________________________________________________________
 -- Work around limitation that you cant compare aggregate values to non-aggregate data
 -- Perform calculations on an already generated result set (a window)
 -- Aggregate calculations: similar to subqueries in SELECT, running totals, rankings, moving averages
+-- Processed after every part of query except ORDER BY
+-- Uses information in result set rather than database
+-- Available in PostgreSQL, Oracle, MySQL, SQL Server.. not in SQLite
 
 
+How many goals were scored in each match in 2011/2012, and how did that compare to the average?
 
+SELECT
+	date,
+	(home_goal +  away_goal) AS goals,
+	AVG(home_goal + away_goal) OVER() AS overall_avg
+FROM match
+WHERE season = '2011/2012';
 
+-- OVER() passes aggregate over result set
+
+What is the rank of matches based on number of goals scored?
+SELECT
+	date,
+	(home_goal +  away_goal) AS goals,
+	RANK() OVER(ORDER BY home_goal + away_goal DESC) AS goals_rank
+FROM match
+WHERE season = '2011/2012';
