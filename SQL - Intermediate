@@ -584,6 +584,7 @@ FROM match
 WHERE season = '2011/2012';
 
 -- OVER() passes aggregate over result set
+-- The OVER() clause allows you to pass an aggregate function down a data set
 
 What is the rank of matches based on number of goals scored?
 SELECT
@@ -592,3 +593,73 @@ SELECT
 	RANK() OVER(ORDER BY home_goal + away_goal DESC) AS goals_rank
 FROM match
 WHERE season = '2011/2012';
+
+-- RANK () default order is from smallest to largest
+-- By adding DESC in Window function you sort results from largest to smallest
+-- window function will apply the filter that you include in your WHERE clause.
+
+SELECT 
+    id,
+    RANK() OVER(ORDER BY home_goal) AS rank
+FROM match;
+
+Example:
+SELECT 
+	-- Select the league name and average goals scored
+	l.name AS league,
+    AVG(m.home_goal + m.away_goal) AS avg_goals,
+    -- Rank leagues in descending order by average goals
+    RANK() OVER(ORDER BY AVG(m.home_goal + m.away_goal) DESC) AS league_rank
+FROM league AS l
+LEFT JOIN match AS m 
+ON l.id = m.country_id
+WHERE m.season = '2011/2012'
+GROUP BY l.name
+-- Order the query by the rank you created
+ORDER BY league_rank;
+
+-- PARTITION BY
+-- Calculate separate values for different categories
+-- Calculate different calculations in the same column
+-- Calculate values broken out by multiple columns
+-- Can partition data by 1 or more columns
+-- Can partition aggregate calculations, ranks, etc..
+
+AVG(home_goal) OVER(PARTITION BY season)
+
+How many goals were scored in each match, and how did that compare to the season's average?
+
+SELECT 
+	date, 
+	(home_goal, away_goal) AS goals,
+	AVG(home_goal + away_goal) OVER(PARTITION BY season) AS season_avg
+FROM match;
+
+Partition by a column:
+SELECT
+	date,
+	season,
+	home_goal,
+	away_goal,
+	CASE WHEN hometeam_id = 8673 THEN 'home' 
+		 ELSE 'away' END AS warsaw_location,
+    -- Calculate the average goals scored partitioned by season
+    AVG(home_goal+away_goal) OVER(partition by season) AS season_homeavg,
+    AVG(home_goal+away_goal) OVER(partition by season) AS season_awayavg
+FROM match
+-- Filter the data set for Legia Warszawa matches only
+WHERE 
+	hometeam_id = 8673 
+    OR awayteam_id = 8673
+ORDER BY (home_goal + away_goal) DESC;
+
+
+SELECT 
+	c.name,
+	m.season,
+	(home_goal, away_goal) AS goals,
+	AVG(home_goal + away_goal) OVER(PARTITION BY m.season,c.name) AS season_ctry_avg
+FROM country AS c
+LEFT JOIN match AS m
+ON c.id = m.country_id
+
