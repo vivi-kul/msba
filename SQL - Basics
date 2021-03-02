@@ -364,6 +364,10 @@ WHERE VendorID NOT IN
                                                 [...]
                                                 sql_statement
 
+RIGHT - Extracts a number of characters from a string (starting from right)
+LEFT - Extracts a number of characters from a string (starting from left)
+UPPER - Converts all letters in the specified string to uppercase
+LOWER - Converts all letters in the specified string to lowercase
 
 
 
